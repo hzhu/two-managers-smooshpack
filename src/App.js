@@ -1,24 +1,66 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Manager } from "smooshpack";
+
+const FooComponent = () => {
+  const fooManagerRef = React.useRef();
+
+  React.useEffect(() => {
+    fooManagerRef.current = new Manager(
+      document.getElementById("preview-foo"),
+      {
+        files: {
+          "/main.js": {
+            code: "document.body.innerHTML = '<h2>Foo preview</h2>'",
+          },
+        },
+        entry: "/main.js",
+        dependencies: { expect: "latest" },
+      }
+    );
+  }, []);
+
+  const onClick = () => {
+    fooManagerRef.current.updatePreview({
+      files: {
+        "/main.js": {
+          code: "document.body.innerHTML = '<h2>Foo preview UPDATED</h2>'",
+        },
+      },
+      entry: "/main.js",
+      dependencies: { expect: "latest" },
+    });
+  };
+
+  return (
+    <>
+      <button onClick={onClick}>Update Foo peview</button>
+      <em> Only Foo preview should update, but both previews update :\</em>
+    </>
+  );
+};
 
 function App() {
+  const barManagerRef = React.useRef();
+  React.useEffect(() => {
+    barManagerRef.current = new Manager(
+      document.getElementById("preview-bar"),
+      {
+        files: {
+          "/index.js": {
+            code: "document.body.innerHTML = '<h2>Bar preview</h2>'",
+          },
+        },
+        entry: "/index.js",
+        dependencies: {
+          uuid: "latest",
+        },
+      }
+    );
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <FooComponent />
     </div>
   );
 }
